@@ -61,7 +61,7 @@ def lexrank(sentences, continuous=False, sim_threshold=0.1, alpha=0.9,
     # sentence -> tf
     sent_tf_list = []
     for sent in sentences:
-        words = tools.word_segmenter_ja(sent)
+        words = tools.word_segmenter_en(sent)
         tf = collections.Counter(words)
         sent_tf_list.append(tf)
 
