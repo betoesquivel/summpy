@@ -4,6 +4,7 @@
 import os
 import re
 import json
+import nltk
 
 
 def tree_encode(obj, encoding='utf-8'):
@@ -56,6 +57,9 @@ def sent_splitter_ja(text, delimiters=set(u'。．？！\n\r'),
     if len(buff) > 0:
         yield ''.join(buff)
 
+def sent_splitter_en(text):
+    tokenizer = nltk.data.load('english.pickle')
+    return tokenizer.tokenize(text)
 
 if os.environ.get('SUMMPY_USE_JANOME') is not None:
     from .misc.janome_segmenter import word_segmenter_ja

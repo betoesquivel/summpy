@@ -39,7 +39,7 @@ def lexrank(sentences, continuous=False, sim_threshold=0.1, alpha=0.9,
         },
         similarity_matrix
       )
-    
+
     Reference:
       Günes Erkan and Dragomir R. Radev.
       LexRank: graph-based lexical centrality as salience in text
@@ -88,7 +88,7 @@ def lexrank(sentences, continuous=False, sim_threshold=0.1, alpha=0.9,
     return scores, sim_mat
 
 
-def summarize(text, sent_limit=None, char_limit=None, imp_require=None,
+def summarize(text, sent_limit=None, char_limit=None, imp_require=None, language='japanese',
               debug=False, **lexrank_params):
     '''
     Args:
@@ -101,7 +101,11 @@ def summarize(text, sent_limit=None, char_limit=None, imp_require=None,
       list of extracted sentences
     '''
     debug_info = {}
-    sentences = list(tools.sent_splitter_ja(text))
+    if language is not 'japanese':
+        sentences = list(tools.sent_splitter_en(text))
+    else:
+        sentences = list(tools.sent_splitter_ja(text))
+
     scores, sim_mat = lexrank(sentences, **lexrank_params)
     sum_scores = sum(scores.itervalues())
     acc_scores = 0.0
@@ -146,9 +150,10 @@ Usage:
     -s: summary length (the number of sentences)
     -c: summary length (the number of charactors)
     -i: cumulative LexRank score [0.0-1.0]
+    -l: language to be used (currently only japanese and english)
     '''.strip()
 
-    options, args = getopt.getopt(sys.argv[1:], 'f:e:v:s:c:i:')
+    options, args = getopt.getopt(sys.argv[1:], 'f:e:v:s:c:i:l:')
     options = dict(options)
 
     if len(options) < 2:
@@ -161,6 +166,7 @@ Usage:
     sent_limit = int(options['-s']) if '-s' in options else None
     char_limit = int(options['-c']) if '-c' in options else None
     imp_require = float(options['-i']) if '-i' in options else None
+    language = options['-l'] if '-l' in options else None
 
     if fname == 'stdin':
         text = '\n'.join(
@@ -177,7 +183,7 @@ Usage:
 
     sentences, debug_info = summarize(
         text, sent_limit=sent_limit, char_limit=char_limit,
-        imp_require=imp_require, **lexrank_params
+        imp_require=imp_require, language=language, **lexrank_params
     )
     for sent in sentences:
         print sent.strip().encode(encoding)
