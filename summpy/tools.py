@@ -61,13 +61,17 @@ def sent_splitter_en(text):
     tokenizer = nltk.data.load('english.pickle')
     return tokenizer.tokenize(text)
 
+def word_segmenter_en(text):
+    tokenizer = WordPunctTokenizer()
+    return tokenizer.tokenize(text)
+
 if os.environ.get('SUMMPY_USE_JANOME') is not None:
     from .misc.janome_segmenter import word_segmenter_ja
 else:
     try:
-        from .misc.mecab_segmenter import word_segmenter_ja
+        from nltk.tokenize import WordPunctTokenizer
     except ImportError:
-        from .misc.janome_segmenter import word_segmenter_ja
+        from nltk.tokenize import WordPunctTokenizer
 
 
 if __name__ == '__main__':
